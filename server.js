@@ -53,15 +53,12 @@ function Weather(forecast, time) {
 }
 
 
-
-
-
 app.use('*', (req, res) => {
     res.status(404).send('NOT FOUND');
 })
 
 app.use((error, req, res) => {
-    res.status(500).send(error);
+    res.status(500).send('Sorry, something went wrong');
 })
 
 app.listen(PORT, () => {
