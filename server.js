@@ -8,7 +8,7 @@ const app = express();
 // handle the main route
 
 app.get('/', (request, response) => {
-    response.status(200).send('you are doing great');
+    response.status(200).send('Welcome to my page for testing API');
 });
 
 // localhost: 3030 / location ? city = lynwood 
@@ -53,16 +53,31 @@ function Weather(forecast, time) {
 }
 
 
+// app.use('*', (req, res) => {
+//     res.status(500).send('Sorry, something went wrong');
+// })
 
 
+app.use((req, res) => {
+    res.status(500).send({
+        status: 500,
+        responseText: `Sorry,something went wrong`,
+    });
+});
 
-app.use('*', (req, res) => {
-    res.status(404).send('NOT FOUND');
-})
 
-app.use((error, req, res) => {
-    res.status(500).send(error);
-})
+// app.use((error, req, res) => {
+//     res.status(404).send('Sorry, something went wrong');
+// })
+
+
+// app.use(function (err, req, res, next) {
+//     console.log(err.stack);
+//     res.type('text/plain');
+//     res.status(500);
+//     res.send('500 Server Error');
+// });
+
 
 app.listen(PORT, () => {
     console.log(`Listening on PORT ${PORT}`);
