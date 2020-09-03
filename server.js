@@ -20,6 +20,7 @@ app.get('/', mainPageHandiling);
 app.get('/location', locationHandling);
 app.get('/weather', weatherHandiling);
 app.get('/trails', trailsHandiling);
+app.get('/movies', moviesHandiling);
 app.use(errorPage);
 
 // Functions
@@ -109,6 +110,26 @@ function trailsHandiling(req, res) {
         });
 }
 
+
+function moviesHandiling(req, res) {
+    let formated_query = req.query.search_query;
+    const moviesAPIKey = process.env.MOVIE_API_KEY;
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${moviesAPIKey}&query=${formated_query}&page=1`;
+    superAgent
+        .get(url)
+        .then((data) => {
+            console.log(data.body.results);
+            let moviesArray = data.body.results.map((data) => {
+                // console.log(moviesArray);
+                return new Movies(data);
+            });
+            res.status(200).json(moviesArray);
+        })
+        .catch(() => {
+            errorPage(req, res, 'Something wrong wiht movies API');
+        });
+}
+
 // Error Page
 function errorPage(req, res, massage = `Sorry,something went wrong`) {
     res.status(500).send({
@@ -160,7 +181,17 @@ function Trails(data) {
         (this.condition_date = data.conditionDate.split(' ')[0]),
         (this.condition_time = data.conditionDate.split(' ')[1]);
 }
+// movies functions
 
+function Movies(data) {
+    this.title = data.title;
+    this.overview = data.overview;
+    this.average_votes = data.vote_average;
+    this.total_votes = data.vote_count;
+    this.image_url = `https://image.tmdb.org/t/p/original${data.poster_path}`;
+    this.popularity = data.popularity;
+    this.released_on = data.release_date;
+}
 // Listen on the server
 
 client.connect().then(() => {
